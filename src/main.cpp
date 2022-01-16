@@ -75,10 +75,10 @@ void autonomous() {}
  */
 void opcontrol() {
 	while (true) {
-		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
-
-		pros::delay(20);
+//		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+//		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+//		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+		drive();
+		op::motor(DIGITAL_L1,DIGITAL_L2,)
 	}
 }
