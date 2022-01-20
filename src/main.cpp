@@ -79,6 +79,5 @@ void opcontrol() {
 //		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 //		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		drive();
-		op::motor(DIGITAL_L1,DIGITAL_L2,)
 	}
 }
