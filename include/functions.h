@@ -9,12 +9,7 @@ void variable(){
     f=f+1;
   }
   if(master.get_digital_new_press(DIGITAL_B)){
-    if(reversed==1){
-      reversed=0;
-    }
-    else if(reversed==0){
-      reversed=1;
-    }
+    reversed =! reversed;
   }
 }
 int function(int x,int y){
