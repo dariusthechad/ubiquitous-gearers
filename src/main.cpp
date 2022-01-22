@@ -1,4 +1,4 @@
-#include "functions.h"
+#include "main.h"
 
 /**
  * A callback function for LLEMU's center button.
@@ -44,7 +44,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	pros::lcd::clear_line(1);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
