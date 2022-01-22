@@ -1,4 +1,5 @@
 #include "motors.h"
+#include "pros/motors.h"
 int f = 1;
 bool reversed = 0;
 void variable(){
@@ -38,6 +39,17 @@ void drive(){
   }
 }
 namespace op {
+  void brake(pros::Motor m,pros::motor_brake_mode_e_t b = pros::E_MOTOR_BRAKE_INVALID){
+    pros::motor_brake_mode_e_t save = m.get_brake_mode();
+    if (b==pros::E_MOTOR_BRAKE_INVALID){
+      m.move_velocity(0);
+    }
+    else{
+      m.set_brake_mode(b);
+      m.move_velocity(0);
+      m.set_brake_mode(save);
+    }
+  }
   void piston(pros::controller_digital_e_t b,pros::ADIDigitalOut p){
     static bool v = 0;
     if (master.get_digital_new_press(b)){
