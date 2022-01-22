@@ -1,13 +1,7 @@
 #include "main.h"
-#include "pros/motors.h"
 
+bool reversed = 0;
 void variable(){
-  if (master.get_digital_new_press(DIGITAL_LEFT)){
-    f=f-1;
-  }
-  if(master.get_digital_new_press(DIGITAL_RIGHT)){
-    f=f+1;
-  }
   if(master.get_digital_new_press(DIGITAL_B)){
     reversed =! reversed;
   }
@@ -40,8 +34,23 @@ void drive(){
   }
 }
 
+pros::controller_digital_e_t shortbutton(button b){
+  switch (b) {
+  case L1:return pros::E_CONTROLLER_DIGITAL_L1;
+  case L2:return pros::E_CONTROLLER_DIGITAL_L2;
+  case R1:return pros::E_CONTROLLER_DIGITAL_R2;
+  case R2:return pros::E_CONTROLLER_DIGITAL_R2;
+  case UP:return pros::E_CONTROLLER_DIGITAL_UP;
+  case DOWN:return pros::E_CONTROLLER_DIGITAL_DOWN;
+  case LEFT:return pros::E_CONTROLLER_DIGITAL_LEFT;
+  case RIGHT:return pros::E_CONTROLLER_DIGITAL_RIGHT;
+  case X:return pros::E_CONTROLLER_DIGITAL_X;
+  case B:return pros::E_CONTROLLER_DIGITAL_B;
+  case Y:return pros::E_CONTROLLER_DIGITAL_Y;
+  case A:return pros::E_CONTROLLER_DIGITAL_A;
+  }
+}
 namespace op {
-  
   void brake(pros::Motor m,pros::motor_brake_mode_e_t b = pros::E_MOTOR_BRAKE_INVALID){
     pros::motor_brake_mode_e_t save = m.get_brake_mode();
     if (b==pros::E_MOTOR_BRAKE_INVALID){
@@ -71,21 +80,18 @@ namespace op {
       m.move_velocity(0);
     }
   }
-/*  void motortest(std::string sf,std::string sb,pros::Motor m,pros::Controller=master,int p=12000){
-    sf = digital.append(sf);
-    sb = digital.append(sb);
-    pros::controller_digital_e_t mf {static_cast <pros::controller_digital_e_t> (sf)};
-    pros::controller_digital_e_t mb {static_cast <pros::controller_digital_e_t> (sb)};
-    if (master.get_digital(mf)){
+  void motortest(button bf,button bb,pros::Motor m,pros::Controller=master,int p=12000){
+    pros::controller_digital_e_t fwd = shortbutton(bf);
+    pros::controller_digital_e_t bwd = shortbutton(bb);
+    if (master.get_digital(fwd)){
       m.move_voltage(p);
     }
-    else if(master.get_digital(mb)){
+    else if(master.get_digital(bwd)){
       m.move_voltage(-p);
     }
     else{
       m.move_velocity(0);
     }
   } 
-  WIP, need to conv from string to controller_digital_e_t
-  */
+
 }
