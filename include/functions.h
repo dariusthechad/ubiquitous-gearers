@@ -38,7 +38,8 @@ void drive(){
   }
 }
 namespace op {
-  void piston(pros::controller_digital_e_t b,pros::ADIDigitalOut p,bool v){
+  void piston(pros::controller_digital_e_t b,pros::ADIDigitalOut p){
+    static bool v = 0;
     if (master.get_digital_new_press(b)){
       v =! v;
       p.set_value(v);
