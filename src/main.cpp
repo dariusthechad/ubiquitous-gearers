@@ -1,5 +1,4 @@
 #include "main.h"
-#include "pros/misc.h"
 
 /**
  * A callback function for LLEMU's center button.
@@ -81,5 +80,7 @@ void opcontrol() {
 //		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 //		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		drive();
+		op::piston(UP,claw,master,12000);
+		op::motor(X, Y, fourbar,partner,12000);
 	}
 }

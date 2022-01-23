@@ -62,31 +62,21 @@ namespace op {
       m.set_brake_mode(save);
     }
   }
-  void piston(pros::controller_digital_e_t b,pros::ADIDigitalOut p){
+  void piston(button eb,pros::ADIDigitalOut p,pros::Controller c,int po){
     static bool v = 0;
-    if (master.get_digital_new_press(b)){
+    pros::controller_digital_e_t b = shortbutton(eb);
+    if (c.get_digital_new_press(b)){
       v =! v;
       p.set_value(v);
     }
   }
-  void motor(pros::controller_digital_e_t mf,pros::controller_digital_e_t mb,pros::Motor m,pros::Controller=master,int p=12000){
-    if (master.get_digital(mf)){
-      m.move_voltage(p);
-    }
-    else if(master.get_digital(mb)){
-      m.move_voltage(-p);
-    }
-    else{
-      m.move_velocity(0);
-    }
-  }
-  void motortest(button bf,button bb,pros::Motor m,pros::Controller=master,int p=12000){
+  void motor(button bf,button bb,pros::Motor m,pros::Controller c=master,int p=12000){
     pros::controller_digital_e_t fwd = shortbutton(bf);
     pros::controller_digital_e_t bwd = shortbutton(bb);
-    if (master.get_digital(fwd)){
+    if (c.get_digital(fwd)){
       m.move_voltage(p);
     }
-    else if(master.get_digital(bwd)){
+    else if(c.get_digital(bwd)){
       m.move_voltage(-p);
     }
     else{

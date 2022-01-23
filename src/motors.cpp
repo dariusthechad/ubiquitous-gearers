@@ -12,3 +12,5 @@ pros::Motor rightb (13,pros::E_MOTOR_GEARSET_18,false,pros::E_MOTOR_ENCODER_DEGR
 
 pros::Motor fourbar (4,pros::E_MOTOR_GEARSET_18,false,pros::E_MOTOR_ENCODER_DEGREES);
 pros::Motor holder (5,pros::E_MOTOR_GEARSET_18,false,pros::E_MOTOR_ENCODER_DEGREES);
+
+pros::ADIDigitalOut claw(7);

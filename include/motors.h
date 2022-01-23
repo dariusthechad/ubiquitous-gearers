@@ -13,3 +13,4 @@ extern pros::Motor rightb;
 
 extern pros::Motor fourbar;
 extern pros::Motor holder;
+extern pros::ADIDigitalOut claw;
