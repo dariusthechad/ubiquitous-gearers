@@ -11,3 +11,5 @@ this is where we can centrally manage the code or something idk
 7) auto balancing using gyro
 8) print more info to controller screen
 9) add advanced options to 2nd controller in driver
+10) multithread da program, improves auton when using PID loops
+11) code odometry for abs pos tracking (extremely wip)
