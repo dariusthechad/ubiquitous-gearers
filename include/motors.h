@@ -12,5 +12,7 @@ extern pros::Motor rightm;
 extern pros::Motor rightb;
 
 extern pros::Motor fourbar;
-extern pros::Motor holder;
-extern pros::ADIDigitalOut claw;
+
+extern pros::ADIDigitalOut goalmech1; 
+extern pros::ADIDigitalOut goalmech2; 
+extern pros::ADIDigitalIn limitswitch;

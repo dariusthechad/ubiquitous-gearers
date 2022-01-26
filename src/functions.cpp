@@ -4,6 +4,14 @@ bool reversed = 0;
 void variable(){
   if(master.get_digital_new_press(DIGITAL_B)){
     reversed =! reversed;
+    if(reversed){
+      master.clear_line(3);
+	    master.set_text(2,1,"reversed");
+    }
+    else{
+      master.clear_line(2);
+	    master.set_text(2,1,"normal");
+    }
   }
 }
 int function(int x,int y){
@@ -33,20 +41,36 @@ void drive(){
     rightf.move(-lefts);
   }
 }
+void fwd(int v){
+  leftb.move_voltage(v);
+  leftm.move_voltage(v);
+  leftf.move_voltage(v);
+  rightb.move_voltage(v);
+  rightm.move_voltage(v);
+  rightf.move_voltage(v);
+}
+void turn(int v){
+  leftb.move_voltage(v);
+  leftm.move_voltage(v);
+  leftf.move_voltage(v);
+  rightb.move_voltage(-v);
+  rightm.move_voltage(-v);
+  rightf.move_voltage(-v);
+}
 
 pros::controller_digital_e_t shortbutton(button b){
   switch (b) {
   case L1:return pros::E_CONTROLLER_DIGITAL_L1;
-  case L2:return pros::E_CONTROLLER_DIGITAL_L2;
-  case R1:return pros::E_CONTROLLER_DIGITAL_R2;
-  case R2:return pros::E_CONTROLLER_DIGITAL_R2;
-  case UP:return pros::E_CONTROLLER_DIGITAL_UP;
-  case DOWN:return pros::E_CONTROLLER_DIGITAL_DOWN;
-  case LEFT:return pros::E_CONTROLLER_DIGITAL_LEFT;
-  case RIGHT:return pros::E_CONTROLLER_DIGITAL_RIGHT;
-  case X:return pros::E_CONTROLLER_DIGITAL_X;
-  case B:return pros::E_CONTROLLER_DIGITAL_B;
-  case Y:return pros::E_CONTROLLER_DIGITAL_Y;
+  case L2:return pros::E_CONTROLLER_DIGITAL_L2; break;
+  case R1:return pros::E_CONTROLLER_DIGITAL_R1; break;
+  case R2:return pros::E_CONTROLLER_DIGITAL_R2; break;
+  case UP:return pros::E_CONTROLLER_DIGITAL_UP; break;
+  case DOWN:return pros::E_CONTROLLER_DIGITAL_DOWN; break;
+  case LEFT:return pros::E_CONTROLLER_DIGITAL_LEFT; break;
+  case RIGHT:return pros::E_CONTROLLER_DIGITAL_RIGHT; break;
+  case X:return pros::E_CONTROLLER_DIGITAL_X; break;
+  case B:return pros::E_CONTROLLER_DIGITAL_B; break;
+  case Y:return pros::E_CONTROLLER_DIGITAL_Y; break;
   case A:return pros::E_CONTROLLER_DIGITAL_A;
   }
 }
@@ -70,7 +94,7 @@ namespace op {
       p.set_value(v);
     }
   }
-  void motor(button bf,button bb,pros::Motor m,pros::Controller c=master,int p=12000){
+  void motor(button bf,button bb,pros::Motor m,pros::Controller c,int p){
     pros::controller_digital_e_t fwd = shortbutton(bf);
     pros::controller_digital_e_t bwd = shortbutton(bb);
     if (c.get_digital(fwd)){

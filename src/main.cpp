@@ -44,9 +44,7 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {
-	pros::lcd::clear_line(1);
-}
+void competition_initialize() {}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -75,12 +73,33 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
+	master.clear_line(2);
+	master.set_text(2,1,"normal");
+	/*pros::Task autoclamp{ [] {
+    	bool should_run = true;
+    	while (true) {
+    	    // block for up to 20ms waiting for a notification and clear the value
+    	    // when a notification is received
+    	    if (pros::Task::notify_take(true, 20)) {
+     	       // if a notification was received, toggle the state of this task
+    	       should_run = !should_run;
+    	   }
+
+    	    // only run task code if state is true
+    	    if (should_run) {
+				goalmech1.set_value(limitswitch.get_value());
+			}
+            // no need to delay here because the call to notify_take blocks
+      	}
+    } };*/
 	while (true) {
 //		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
 //		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 //		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		drive();
-		op::piston(UP,claw,master,12000);
-		op::motor(X, Y, fourbar,partner,12000);
+		variable();
+		op::motor(R1,R2,fourbar,master);
+		op::piston(X,goalmech1,master);
+		pros::delay(10);
 	}
 }
