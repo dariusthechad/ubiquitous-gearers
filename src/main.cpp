@@ -1,4 +1,6 @@
 #include "main.h"
+#include "motors.h"
+#include "pros/misc.h"
 
 /**
  * A callback function for LLEMU's center button.
@@ -10,7 +12,7 @@ void on_center_button() {
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
+		pros::lcd::set_text(2, "u pressed middle button");
 	} else {
 		pros::lcd::clear_line(2);
 	}
@@ -24,7 +26,7 @@ void on_center_button() {
  */
 void initialize() {
 	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
+	pros::lcd::set_text(1, "finally fixed screen");
 	pros::lcd::register_btn1_cb(on_center_button);
 }
 
@@ -72,6 +74,7 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+bool goalmech = 0;
 void opcontrol() {
 	master.clear_line(2);
 	master.set_text(2,1,"normal");
@@ -93,13 +96,17 @@ void opcontrol() {
       	}
     } };*/
 	while (true) {
-//		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
-//		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
-//		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		drive();
 		variable();
 		op::motor(R1,R2,fourbar,master);
-		op::piston(X,goalmech1,master);
 		pros::delay(10);
+		if (master.get_digital_new_press(DIGITAL_X)){
+			goalmech =! goalmech;
+			goalmech1.set_value(goalmech);
+			goalmech2.set_value(goalmech);
+		}
 	}
 }

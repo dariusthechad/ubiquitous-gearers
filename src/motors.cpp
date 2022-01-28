@@ -12,6 +12,6 @@ pros::Motor rightb (13,pros::E_MOTOR_GEARSET_06,false,pros::E_MOTOR_ENCODER_DEGR
 
 pros::Motor fourbar (10,pros::E_MOTOR_GEARSET_18,false,pros::E_MOTOR_ENCODER_DEGREES);
 
-pros::ADIDigitalOut goalmech1(A); 
-pros::ADIDigitalOut goalmech2(B);
-pros::ADIDigitalIn limitswitch(C);
+pros::ADIDigitalOut goalmech1(2); 
+pros::ADIDigitalOut goalmech2(3);
+pros::ADIDigitalIn limitswitch(4);
