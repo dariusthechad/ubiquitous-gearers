@@ -1,6 +1,4 @@
 #include "main.h"
-#include "motors.h"
-#include "pros/misc.h"
 
 /**
  * A callback function for LLEMU's center button.
@@ -27,7 +25,9 @@ void on_center_button() {
 void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "finally fixed screen");
-	pros::lcd::register_btn1_cb(on_center_button);
+	pros::lcd::register_btn1_cb(on_center_button);			
+	goalmech1.set_value(1);
+	goalmech2.set_value(1);
 }
 
 /**
@@ -77,7 +77,7 @@ void autonomous() {}
 bool goalmech = 0;
 void opcontrol() {
 	master.clear_line(2);
-	master.set_text(2,1,"normal");
+	master.set_text(2, 0, "normal");
 	/*pros::Task autoclamp{ [] {
     	bool should_run = true;
     	while (true) {

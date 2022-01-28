@@ -6,11 +6,11 @@ void variable(){
     reversed =! reversed;
     if(reversed){
       master.clear_line(3);
-	    master.set_text(2,1,"reversed");
+	    master.set_text(2, 0, "reversed");
     }
     else{
       master.clear_line(2);
-	    master.set_text(2,1,"normal");
+	    master.set_text(2, 0, "normal");
     }
   }
 }
