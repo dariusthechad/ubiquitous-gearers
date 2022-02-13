@@ -1,27 +1,36 @@
 #include "main.h"
+#include "motors.h"
 
-bool reversed = 0;
-void variable(){
-  if(master.get_digital_new_press(DIGITAL_B)){
+bool reversed = 1;
+void variable(pros::controller_digital_e_t b){
+  if(master.get_digital_new_press(b)){
     reversed =! reversed;
     if(reversed){
-      master.clear_line(3);
+      master.clear_line(2);
+      pros::delay(50);
 	    master.set_text(2, 0, "reversed");
     }
     else{
       master.clear_line(2);
+      pros::delay(50);
 	    master.set_text(2, 0, "normal");
     }
   }
 }
-int function(int x,int y){
-  return (x^y)/(127^(y-1));
+int curvespeed(bool red, int input, double t){
+  int val;
+  if(red){
+    val = (std::exp(-t/10)+std::exp((std::abs(input)-100)/10)*(1-std::exp(-t/10))) * input;
+  }else{
+    //blue
+    val = std::exp(((std::abs(input)-100)*t)/1000) * input;
+  }
+  return val;
 }
+
 void drive(){
-  float leftj = master.get_analog(ANALOG_LEFT_Y);
-  float rightj = master.get_analog(ANALOG_RIGHT_Y);
-  int lefts = leftj;
-  int rights = rightj;
+  int lefts = curvespeed(true,master.get_analog(ANALOG_LEFT_Y),10);
+  int rights = curvespeed(true,master.get_analog(ANALOG_RIGHT_Y),10);
   if (reversed==0){
     leftb.move(lefts);
     leftm.move(lefts);
@@ -57,23 +66,16 @@ void turn(int v){
   rightm.move_voltage(-v);
   rightf.move_voltage(-v);
 }
-
-pros::controller_digital_e_t shortbutton(button b){
-  switch (b) {
-  case L1:return pros::E_CONTROLLER_DIGITAL_L1;
-  case L2:return pros::E_CONTROLLER_DIGITAL_L2; break;
-  case R1:return pros::E_CONTROLLER_DIGITAL_R1; break;
-  case R2:return pros::E_CONTROLLER_DIGITAL_R2; break;
-  case UP:return pros::E_CONTROLLER_DIGITAL_UP; break;
-  case DOWN:return pros::E_CONTROLLER_DIGITAL_DOWN; break;
-  case LEFT:return pros::E_CONTROLLER_DIGITAL_LEFT; break;
-  case RIGHT:return pros::E_CONTROLLER_DIGITAL_RIGHT; break;
-  case X:return pros::E_CONTROLLER_DIGITAL_X; break;
-  case B:return pros::E_CONTROLLER_DIGITAL_B; break;
-  case Y:return pros::E_CONTROLLER_DIGITAL_Y; break;
-  case A:return pros::E_CONTROLLER_DIGITAL_A;
-  }
+void stop(){
+  leftf.move_velocity(0);
+  leftm.move_velocity(0);
+  leftb.move_velocity(0);
+  rightf.move_velocity(0);
+  rightm.move_velocity(0);
+  rightb.move_velocity(0);
 }
+
+
 namespace op {
   void brake(pros::Motor m,pros::motor_brake_mode_e_t b = pros::E_MOTOR_BRAKE_INVALID){
     pros::motor_brake_mode_e_t save = m.get_brake_mode();
@@ -86,17 +88,16 @@ namespace op {
       m.set_brake_mode(save);
     }
   }
-  void piston(button eb,pros::ADIDigitalOut p,pros::Controller c,int po){
-    static bool v = 0;
-    pros::controller_digital_e_t b = shortbutton(eb);
+  void piston(e_button eb,pros::ADIDigitalOut p,bool &v,pros::Controller c){
+    pros::controller_digital_e_t b = buttonmap(eb);
     if (c.get_digital_new_press(b)){
       v =! v;
       p.set_value(v);
     }
   }
-  void motor(button bf,button bb,pros::Motor m,pros::Controller c,int p){
-    pros::controller_digital_e_t fwd = shortbutton(bf);
-    pros::controller_digital_e_t bwd = shortbutton(bb);
+  void motor(e_button bf,e_button bb,pros::Motor m,pros::Controller c,int p){
+    pros::controller_digital_e_t fwd = buttonmap(bf);
+    pros::controller_digital_e_t bwd = buttonmap(bb);
     if (c.get_digital(fwd)){
       m.move_voltage(p);
     }

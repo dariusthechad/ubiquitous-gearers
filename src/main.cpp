@@ -1,4 +1,6 @@
 #include "main.h"
+#include "motors.h"
+
 
 /**
  * A callback function for LLEMU's center button.
@@ -26,8 +28,6 @@ void initialize() {
 	pros::lcd::initialize();
 	pros::lcd::set_text(1, "finally fixed screen");
 	pros::lcd::register_btn1_cb(on_center_button);			
-	goalmech1.set_value(1);
-	goalmech2.set_value(1);
 }
 
 /**
@@ -46,7 +46,9 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	fourbar.set_brake_mode(pros::E_MOTOR_BRAKE_BRAKE);
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -59,7 +61,15 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	claw.set_value(0); clawb =0;
+	fwd(-12000);
+	pros::delay(1100);
+	claw.set_value(1); clawb =1;
+	fwd();
+	pros::delay(900);
+	stop();
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -74,10 +84,9 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-bool goalmech = 0;
 void opcontrol() {
-	master.clear_line(2);
 	master.set_text(2, 0, "normal");
+	//master.set_text(2, 0, "normal");
 	/*pros::Task autoclamp{ [] {
     	bool should_run = true;
     	while (true) {
@@ -100,13 +109,16 @@ void opcontrol() {
 		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
 		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);
 		drive();
-		variable();
-		op::motor(R1,R2,fourbar,master);
-		pros::delay(10);
-		if (master.get_digital_new_press(DIGITAL_X)){
-			goalmech =! goalmech;
-			goalmech1.set_value(goalmech);
-			goalmech2.set_value(goalmech);
+		variable(DIGITAL_B);
+		if (master.get_digital_new_press(DIGITAL_R2)){
+			gmb =! gmb;
+			goalmech1.set_value(gmb);
+			goalmech2.set_value(gmb);
 		}
+		if (master.get_digital_new_press(DIGITAL_R1)){
+			clawb =! clawb;
+			claw.set_value(clawb);
+		}
+		pros::delay(10);
 	}
 }

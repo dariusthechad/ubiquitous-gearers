@@ -37,6 +37,7 @@
 #include "api.h"
 #include "functions.h"
 #include "motors.h"
+#include "shrek.h"
 
 /**
  * You should add more #includes here

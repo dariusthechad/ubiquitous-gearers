@@ -13,6 +13,7 @@ extern pros::Motor rightb;
 
 extern pros::Motor fourbar;
 
-extern pros::ADIDigitalOut goalmech1; 
-extern pros::ADIDigitalOut goalmech2; 
+extern pros::ADIDigitalOut goalmech1; extern bool gmb;
+extern pros::ADIDigitalOut goalmech2;
+extern pros::ADIDigitalOut claw; extern bool clawb;
 extern pros::ADIDigitalIn limitswitch;
