@@ -38,6 +38,7 @@
 #include "functions.h"
 #include "motors.h"
 #include "shrek.h"
+#include "odom.h"
 
 /**
  * You should add more #includes here

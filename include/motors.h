@@ -1,19 +1,26 @@
-#include "api.h"
+
 #pragma once
+#include "api.h"
+#include "shrek.h"
+
 extern pros::Controller master;
 extern pros::Controller partner;
 
-extern pros::Motor leftf;
-extern pros::Motor leftm;
-extern pros::Motor leftb;
+extern shrek::motor leftf;
+extern shrek::motor leftm;
+extern shrek::motor leftb;
 
-extern pros::Motor rightf;
-extern pros::Motor rightm;
-extern pros::Motor rightb;
+extern shrek::motor rightf;
+extern shrek::motor rightm;
+extern shrek::motor rightb;
 
-extern pros::Motor fourbar;
+extern shrek::motor fourbar;
+extern shrek::motor conveyor;
 
-extern pros::ADIDigitalOut goalmech1; extern bool gmb;
-extern pros::ADIDigitalOut goalmech2;
-extern pros::ADIDigitalOut claw; extern bool clawb;
+extern shrek::digitalout goalmech1; extern bool gmb;
+extern shrek::digitalout goalmech2;
+extern shrek::digitalout claw;
 extern pros::ADIDigitalIn limitswitch;
+
+extern pros::ADIEncoder trackl;
+extern pros::ADIEncoder trackr;

@@ -2,9 +2,9 @@
 #pragma once
 
 extern bool reversed;
-void variable(pros::controller_digital_e_t b);
 int curvespeed(bool red, int input, double t);
-void drive();
+void drive(pros::controller_digital_e_t b);
 void fwd(int v =12000);
 void turn(int v =12000);
 void stop();
+void autoclampf();

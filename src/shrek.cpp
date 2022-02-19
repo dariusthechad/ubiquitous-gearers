@@ -1,4 +1,3 @@
-#pragma once
 #include "main.h"
 #include "pros/motors.h"
 
@@ -25,5 +24,6 @@ pros::motor_brake_mode_e_t brakemap(e_brake b){
         case brake:return pros::E_MOTOR_BRAKE_BRAKE;
         case hold:return pros::E_MOTOR_BRAKE_HOLD;
         case invalid:return pros::E_MOTOR_BRAKE_INVALID;
+        default:return pros::E_MOTOR_BRAKE_INVALID;
     }
 }
