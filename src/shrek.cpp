@@ -1,5 +1,4 @@
 #include "main.h"
-#include "pros/motors.h"
 
 pros::controller_digital_e_t buttonmap(e_button b){
   switch (b) {

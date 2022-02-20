@@ -113,3 +113,23 @@ class motor: public pros::Motor{
 }; //class motor
 
 } //namespace shrek
+
+struct PID{
+    long double error = 0;
+    long double preverror = 0;
+    long double kP = 0;
+    long double kI = 0;
+    long double kD = 0;
+    long double integral = 0;
+    long double derivative = 0;
+    long double integralstart = 0;
+    int counter = 0;
+    void integrate(){
+        if(fabs(error) < integralstart){
+        integral = integral + error;
+        }
+        else{
+            integral = 0;
+        }
+    }
+};

@@ -148,74 +148,35 @@ namespace op {
 
 }
 
-void autoclampf(){
-	bool enabled = false;
-	while(true){
-		if(pros::Task::notify_take(true,20)){
-			enabled =! enabled;
-		}
-		if (enabled){
-			if(limitswitch.get_new_press()){
-				claw.set_value(1);
-			}
-		}
-		pros::delay(10);
-	}
-}
+PID turnpid;
+void turnto(float target){
+  std::uint32_t starttime = pros::millis();
+  turnpid.kP = 1000;
+  turnpid.integralstart = 30;
+  while(true){
 
-void turnpid(float target){
-  
-  double error = angle180(target - getorientation());
-  double preverror = error;
-  double derivative = 0;
-  double integral = 0;
-  double power = 0;
+    turnpid.error = angle180(target - getorientation());
 
-  const float kP = 1000;
-  const float kI = 0;
-  const float kD = 0;
+    turnpid.derivative = turnpid.error-turnpid.preverror;
 
-  if(error>0){//clockwise turning
-    while(fabs(error)>0.5 && pros::competition::is_autonomous()){
-      error = angle180(target - getorientation());
-      derivative = error-preverror;
-      integral += error;
+    turnpid.integrate();
 
-      //integral windup
-      if (error<=0) {
-        integral = 0;
+    if (fabs(turnpid.error)<0.5) {
+    turnpid.counter += 1;
+      if (turnpid.counter>=5){
+        break;
       }
-      if (error>20){
-        integral =0;
-      }
-    
-
-      power = error*kP + integral*kI + derivative*kD;
-      turn(power);
-      preverror = error;
-      pros::delay(10);
     }
-  }
-  else{//anti-clockwise turning
-    while(fabs(error)>0.5 && pros::competition::is_autonomous()){
-      error = angle180(target - getorientation());
-      derivative = error-preverror;
-      integral += error;
-
-      //integral windup
-      if (error>=0){
-        integral = 0;
-      }
-      if (error<20){
-        integral =0;
-      }
-    
-
-      power = error*kP + integral*kI + derivative*kD;
-      turn(power);
-      preverror = error;
-      pros::delay(10);
+    else{
+      turnpid.counter = 0;
     }
+
+    turn(turnpid.error*turnpid.kP + turnpid.integral*turnpid.kI + turnpid.derivative*turnpid.kD);
+
+    turnpid.preverror = turnpid.error;
+    pros::delay(10);
   }
   fwd(0);
+  std::cout << "time taken to turn: " << std::to_string((pros::millis()-starttime)/1000) << std::endl;
+  std::cout << "angle achieved: " << std::to_string(angle360(getorientation())) << std::endl;
 }

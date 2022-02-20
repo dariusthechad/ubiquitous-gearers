@@ -1,20 +1,5 @@
 #include "main.h"
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "u pressed middle button");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -27,7 +12,6 @@ void initialize() {
 	fourbar.set_brake_mode(brake);	
 	starttracking();
 }
-
 /**
  * Runs while the robot is in the disabled state of Field Management System or
  * the VEX Competition Switch, following either autonomous or opcontrol. When
@@ -59,13 +43,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	claw.set_value(0);
-	fwd(-12000);
-	pros::delay(1100);
-	claw.set_value(1);
-	fwd();
-	pros::delay(900);
-	stop();
+	leftgoaltime();
 }
 
 
@@ -73,16 +51,18 @@ void autonomous() {
 void opcontrol() {
 	master.clear();
 	master.set_text(2, 0, "normal");
+	float prevword = 0;
+	float word;
 	while (true) {
-		std::string prevword= std::to_string(getorientation());
-		std::string word= std::to_string(getorientation());
+		word = (getorientation());
 		if (word != prevword){
 			master.clear_line(0);
 			pros::delay(50);
-			master.set_text(0,0,word);
+			master.set_text(0,0,std::to_string(word));
 		}
 		pros::lcd::clear_line(0);
-		pros::lcd::set_text(0,word);
+		pros::lcd::set_text(0,std::to_string(word));
+		prevword= word;
 
 		drive(DIGITAL_B);
 		if (master.get_digital_new_press(DIGITAL_R2)){
@@ -90,7 +70,7 @@ void opcontrol() {
 			goalmech2.toggle();
 		}
 		if(limitswitch.get_new_press()){
-				claw.set_value(1);
+			claw.set_value(1);
 		}
 		if (master.get_digital_new_press(DIGITAL_R1)){
 			claw.toggle();

@@ -27,7 +27,7 @@ float absorientation;
 
 
 
-double angle360(double angle) { //makes an angle between 0 and 360
+long double angle360(long double angle) { //makes an angle between 0 and 360
   while(!(angle >= 0 && angle < 360)) {
     if( angle < 0 ) { angle += 360; }
     if(angle >= 360) { angle -= 360; }
@@ -35,7 +35,7 @@ double angle360(double angle) { //makes an angle between 0 and 360
   return(angle);
 }
 
-double angle180(double angle) { // makes an angle between -180 and 180
+long double angle180(long double angle) { // makes an angle between -180 and 180
   while(!(angle >= -180 && angle < 180)) {
     if( angle < -180 ) { angle += 360; }
     if(angle >= 180) { angle -= 360; }
@@ -65,6 +65,6 @@ void starttracking(float o){
     trackl.reset();
 }
 
-double getorientation(){
+long double getorientation(){
   return startorientation + (halfdiaoverwidth) * (trackl.get_value()-trackr.get_value());
 }
