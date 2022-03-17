@@ -1,5 +1,6 @@
 #pragma once
 #include "api.h"
+#include "pros/misc.hpp"
 
 enum e_button{
   L1,L2,R1,R2,UP,DOWN,LEFT,RIGHT,X,B,Y,A
@@ -18,12 +19,12 @@ class digitalout: public pros::ADIDigitalOut{
 
     public:
 
-    explicit digitalout(std::uint8_t adi_port, bool init_state = 0)
+    explicit digitalout(std::uint8_t adi_port, bool init_state = LOW)
     :pros::ADIDigitalOut{adi_port,init_state},
     m_value {init_state}
     {}
 
-    explicit digitalout(pros::ext_adi_port_pair_t port_pair, bool init_state = 0)
+    digitalout(pros::ext_adi_port_pair_t port_pair, bool init_state = LOW)
     :pros::ADIDigitalOut{port_pair,init_state},
     m_value {init_state}
     {}
@@ -47,7 +48,7 @@ class digitalout: public pros::ADIDigitalOut{
 class motor: public pros::Motor{
     private:
     pros::motor_brake_mode_e_t m_brake;
-
+    
     public:
     explicit motor(const std::uint8_t port, const pros::motor_gearset_e_t gearset, const bool reverse, const pros::motor_encoder_units_e_t encoder_units
     , pros::motor_brake_mode_e_t brake = pros::E_MOTOR_BRAKE_COAST)
@@ -97,7 +98,7 @@ class motor: public pros::Motor{
         m_brake = brakemap(b);
         pros::Motor::set_brake_mode(m_brake);
     }
-    void sus(e_button b1, e_button b2, pros::Controller c){
+    void control(e_button b1, e_button b2, pros::Controller c){
         pros::controller_digital_e_t button1 = buttonmap(b1);
         pros::controller_digital_e_t button2 = buttonmap(b2);
         if (c.get_digital(button1)){
@@ -109,6 +110,29 @@ class motor: public pros::Motor{
         else{
             move_velocity(0);
         }
+    }
+    void togglecontrol(e_button b1, e_button b2, pros::Controller c){
+        pros::controller_digital_e_t button1 = buttonmap(b1);
+        pros::controller_digital_e_t button2 = buttonmap(b2);
+        if (c.get_digital_new_press(button1)){
+            if (get_actual_velocity()>0){
+                move_velocity(0);
+            }
+            else{
+                move_voltage(12000);
+            }
+        }
+        if (c.get_digital_new_press(button2)){
+            if (get_actual_velocity()<0){
+                move_velocity(0);
+                
+            }
+            else{
+                move_voltage(-12000);
+                
+            }
+        }
+
     }
 }; //class motor
 
@@ -131,5 +155,14 @@ struct PID{
         else{
             integral = 0;
         }
+    }
+    long double speed(){
+        return kP*error + kI*integral + kD*derivative;
+    }
+    void reset(){
+    long double error = 0;
+    long double preverror = 0;
+    long double integral = 0;
+    long double derivative = 0;
     }
 };

@@ -8,3 +8,5 @@ void fwd(int v =12000);
 void turn(int v =12000);
 void stop();
 void autoclampf();
+void turnto(float target);
+void fwdto(float target);

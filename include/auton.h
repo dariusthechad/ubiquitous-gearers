@@ -1,4 +1,8 @@
 #pragma once
-#include "shrek.h"
+#include "classes.h"
 
+void jankpistontoggle();
 void leftgoaltime();
+void middlegoaltime();
+void skills();
+void leftgoalfast();

@@ -1,4 +1,7 @@
 #include "main.h"
+#include "auton.h"
+#include "functions.h"
+#include "pros/rtos.hpp"
 
 
 /**
@@ -9,8 +12,8 @@
  */
 void initialize() {
 	pros::lcd::initialize();
-	fourbar.set_brake_mode(brake);	
 	starttracking();
+	fourbar.set_brake_mode(brake);
 }
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -43,40 +46,37 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	leftgoaltime();
+	leftgoalfast();
 }
-
 
 
 void opcontrol() {
 	master.clear();
+	pros::delay(50);
 	master.set_text(2, 0, "normal");
-	float prevword = 0;
-	float word;
+
+
 	while (true) {
-		word = (getorientation());
-		if (word != prevword){
-			master.clear_line(0);
-			pros::delay(50);
-			master.set_text(0,0,std::to_string(word));
-		}
-		pros::lcd::clear_line(0);
-		pros::lcd::set_text(0,std::to_string(word));
-		prevword= word;
+		pros::lcd::set_text(0,std::to_string(getorientation()));
 
 		drive(DIGITAL_B);
+		
 		if (master.get_digital_new_press(DIGITAL_R2)){
-			goalmech1.toggle();
-			goalmech2.toggle();
+			backclamp.toggle();
+		}
+
+		if (master.get_digital_new_press(DIGITAL_R1)){
+			jankpistontoggle();
 		}
 		if(limitswitch.get_new_press()){
-			claw.set_value(1);
+			clawe.set_value(1);
 		}
-		if (master.get_digital_new_press(DIGITAL_R1)){
-			claw.toggle();
+		if (master.get_digital_new_press(DIGITAL_X)){
+			master.set_text(0,0,std::to_string(getorientation()));
 		}
-		fourbar.sus(L1,L2,master);
-		conveyor.sus(UP,DOWN,master);
+		
+		fourbar.control(L1,L2,master);
+		conveyor.togglecontrol(UP,DOWN,master);
 		pros::delay(10);
 	}
 }

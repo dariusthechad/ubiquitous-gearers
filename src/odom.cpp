@@ -1,8 +1,10 @@
 #include "main.h"
 
+
+//4.389763 original measurement
 #define WHEELDIA 2.75
-#define RWIDTH  5
-#define LWIDTH 5
+#define RWIDTH  4.55408568
+#define LWIDTH 4.55408568
 
 //constants for performance
 const float halfdia = WHEELDIA/2;
@@ -10,7 +12,7 @@ const float totalwidth = RWIDTH + LWIDTH;
 const float halfdiaoverwidth = halfdia/totalwidth;
 
 // inches/tick (diam*pi)/360
-const float rratio = 0.02399827721492203;
+const float rratio = 0.02399827721492203; 
 const float lratio = 0.02399827721492203;
 const float radtodeg = 180/pi;
 

@@ -1,4 +1,5 @@
 #include "main.h"
+#include "odom.h"
 
 bool reversed = 0;
 
@@ -6,6 +7,7 @@ bool reversed = 0;
 int curvespeed(bool red, int input, double t){
   int val = 0;
   if(red){
+    //red
     val = (std::exp(-t/10)+std::exp((std::abs(input)-100)/10)*(1-std::exp(-t/10))) * input;
   }else{
     //blue
@@ -61,17 +63,13 @@ void rightstop(){
 void drive(pros::controller_digital_e_t b){
   double lefts;
   double rights;
-    if(master.get_digital_new_press(b)){
+  if(master.get_digital_new_press(b)){
     reversed =! reversed;
     if(reversed){
-      master.clear_line(2);
-      pros::delay(50);
 	    master.set_text(2, 0, "reversed");
     }
     else{
-      master.clear_line(2);
-      pros::delay(50);
-	    master.set_text(2, 0, "normal");
+	    master.set_text(2, 0, "normal  ");
     }
   }
     if (abs(master.get_analog(ANALOG_LEFT_Y))>5){
@@ -144,14 +142,16 @@ namespace op {
       else{
         m.move_velocity(0);
       }
-  } 
+  }
 
 }
 
 PID turnpid;
 void turnto(float target){
   std::uint32_t starttime = pros::millis();
-  turnpid.kP = 1000;
+  turnpid.kP = 800;
+  turnpid.kI = 5;
+  turnpid.kD = 25;
   turnpid.integralstart = 30;
   while(true){
 
@@ -163,7 +163,7 @@ void turnto(float target){
 
     if (fabs(turnpid.error)<0.5) {
     turnpid.counter += 1;
-      if (turnpid.counter>=5){
+      if (turnpid.counter>=10){
         break;
       }
     }
@@ -171,12 +171,43 @@ void turnto(float target){
       turnpid.counter = 0;
     }
 
-    turn(turnpid.error*turnpid.kP + turnpid.integral*turnpid.kI + turnpid.derivative*turnpid.kD);
+    turn(turnpid.speed());
 
     turnpid.preverror = turnpid.error;
+    std::cout << "error: " << std::to_string(getorientation()) << '\n';
+    std::cout << "speed: " << std::to_string(turnpid.speed()) << '\n';
     pros::delay(10);
   }
   fwd(0);
-  std::cout << "time taken to turn: " << std::to_string((pros::millis()-starttime)/1000) << std::endl;
-  std::cout << "angle achieved: " << std::to_string(angle360(getorientation())) << std::endl;
+  std::cout << "time taken to turn: " << std::to_string((pros::millis()-starttime)/1000) << '\n';
+  std::cout << "angle achieved: " << std::to_string(getorientation()) << '\n';
+  master.set_text(0,0,std::to_string(getorientation()));
+}
+
+PID fwdpid;
+void fwdto(float target){
+  target = target/circum360; // units are ticks
+  float startleft = trackl.get_value();
+  float startright = trackr.get_value();
+  fwdpid.kP = 500;
+  while (true){
+    fwdpid.error = target - (float((trackl.get_value())+(trackr.get_value()))/2)/circum360; //units are ticks
+
+    fwdpid.derivative = fwdpid.error - fwdpid.preverror;
+    fwdpid.integrate();
+    if (fabs(fwdpid.error)<5){
+      fwdpid.counter += 1;
+      if(fwdpid.counter>5){
+        break;
+      }
+    }
+    else{
+      fwdpid.counter = 0;
+    }
+    fwd(fwdpid.speed());
+    fwdpid.preverror = fwdpid.error;
+    pros::delay(10);
+  }
+  fwdpid.reset();
+  fwd(0);
 }
