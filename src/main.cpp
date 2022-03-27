@@ -46,7 +46,7 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-	leftgoalfast();
+	fwdto(48);
 }
 
 
@@ -54,7 +54,7 @@ void opcontrol() {
 	master.clear();
 	pros::delay(50);
 	master.set_text(2, 0, "normal");
-
+	
 
 	while (true) {
 		pros::lcd::set_text(0,std::to_string(getorientation()));
@@ -66,7 +66,8 @@ void opcontrol() {
 		}
 
 		if (master.get_digital_new_press(DIGITAL_R1)){
-			jankpistontoggle();
+			clawe.toggle();
+			clawr.toggle();
 		}
 		if(limitswitch.get_new_press()){
 			clawe.set_value(1);

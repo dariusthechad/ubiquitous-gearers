@@ -2,6 +2,8 @@
 
 
 //4.389763 original measurement
+//current angle divided by expected angle = width multiplier
+//4.55408568
 #define WHEELDIA 2.75
 #define RWIDTH  4.55408568
 #define LWIDTH 4.55408568

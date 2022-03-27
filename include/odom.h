@@ -7,6 +7,7 @@ const long double pi = 3.1415926535897932384626433832795028841971693993751058209
 //circum = diam*pi /360
 const long double circum = 2.75*pi;
 const long double circum360 = circum*360;
+const long double circumover360 = 360/circum;
 
 
 long double angle360(long double angle);

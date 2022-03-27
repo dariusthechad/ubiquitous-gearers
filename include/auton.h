@@ -6,3 +6,4 @@ void leftgoaltime();
 void middlegoaltime();
 void skills();
 void leftgoalfast();
+void awp();

@@ -138,31 +138,57 @@ class motor: public pros::Motor{
 
 } //namespace shrek
 
-struct PID{
+class PID{
+    private:
+    float kP = 0;
+    float kI = 0;
+    float kD = 0;
+    float speed = 0;
+    float prevspeed = 0;
+    float difspeed = 0;
+    float slew = 0;
+    public:
     long double error = 0;
     long double preverror = 0;
-    long double kP = 0;
-    long double kI = 0;
-    long double kD = 0;
     long double integral = 0;
     long double derivative = 0;
-    long double integralstart = 0;
     int counter = 0;
-    void integrate(){
-        if(fabs(error) < integralstart){
-        integral = integral + error;
+
+    PID(float p, float i, float d, float s){
+        kP = p;
+        kI = i;
+        kD = d;
+        slew = s;
+    }
+
+    long double slewspeed(){
+        if (speed >12000){
+            prevspeed = 12000;
+        }
+        else if(speed <-12000){
+            prevspeed = -12000;
         }
         else{
-            integral = 0;
+            prevspeed = speed;
         }
-    }
-    long double speed(){
-        return kP*error + kI*integral + kD*derivative;
+        speed = kP*error + kI*integral + kD*derivative;
+        difspeed = speed - prevspeed;
+        if (difspeed > slew){
+            difspeed = slew;
+            speed = prevspeed + slew;
+        }
+        else if(difspeed < -slew){
+            difspeed = -slew;
+            speed = prevspeed - slew;
+        }
+        return prevspeed + difspeed;
     }
     void reset(){
-    long double error = 0;
-    long double preverror = 0;
-    long double integral = 0;
-    long double derivative = 0;
+    error = 0;
+    preverror = 0;
+    integral = 0;
+    derivative = 0;
+    prevspeed = 0;
+    speed = 0;
     }
 };

@@ -146,20 +146,15 @@ namespace op {
 
 }
 
-PID turnpid;
+PID turnpid(800,5,25,24000);
 void turnto(float target){
   std::uint32_t starttime = pros::millis();
-  turnpid.kP = 800;
-  turnpid.kI = 5;
-  turnpid.kD = 25;
-  turnpid.integralstart = 30;
   while(true){
 
     turnpid.error = angle180(target - getorientation());
 
     turnpid.derivative = turnpid.error-turnpid.preverror;
 
-    turnpid.integrate();
 
     if (fabs(turnpid.error)<0.5) {
     turnpid.counter += 1;
@@ -171,11 +166,11 @@ void turnto(float target){
       turnpid.counter = 0;
     }
 
-    turn(turnpid.speed());
+    turn(turnpid.slewspeed());
 
     turnpid.preverror = turnpid.error;
     std::cout << "error: " << std::to_string(getorientation()) << '\n';
-    std::cout << "speed: " << std::to_string(turnpid.speed()) << '\n';
+    std::cout << "speed: " << std::to_string(turnpid.slewspeed()) << '\n';
     pros::delay(10);
   }
   fwd(0);
@@ -184,30 +179,43 @@ void turnto(float target){
   master.set_text(0,0,std::to_string(getorientation()));
 }
 
-PID fwdpid;
+PID fwdpid( 30 , 0.02 , 0 , 400 );
 void fwdto(float target){
-  target = target/circum360; // units are ticks
-  float startleft = trackl.get_value();
-  float startright = trackr.get_value();
-  fwdpid.kP = 500;
+  std::uint32_t starttime = pros::millis();
+  target = target*circumover360; // conv units from distance to degrees
+  starttracking(getorientation());
   while (true){
-    fwdpid.error = target - (float((trackl.get_value())+(trackr.get_value()))/2)/circum360; //units are ticks
+    fwdpid.error = target - (float((trackl.get_value())+(trackr.get_value()))/2); //units are ticks
 
     fwdpid.derivative = fwdpid.error - fwdpid.preverror;
-    fwdpid.integrate();
-    if (fabs(fwdpid.error)<5){
+    fwdpid.integral = fwdpid.integral + fwdpid.error;
+
+    if (target >0){ // if going fwd
+    if (fwdpid.error<=0){ //if passes target reset integral
+        fwdpid.integral = 0;
+      }
+    }
+    else { //if going bwd
+       if (fwdpid.error>=0){ //if passes target reset integral
+        fwdpid.integral = 0;
+      }
+    }
+
+    if (fabs(fwdpid.error)<20){
       fwdpid.counter += 1;
-      if(fwdpid.counter>5){
+      if(fwdpid.counter>100){
         break;
       }
     }
     else{
       fwdpid.counter = 0;
     }
-    fwd(fwdpid.speed());
+    fwd(fwdpid.slewspeed());
     fwdpid.preverror = fwdpid.error;
     pros::delay(10);
   }
   fwdpid.reset();
   fwd(0);
+  std::cout << "final error: " << std::to_string(target - (float((trackl.get_value())+(trackr.get_value()))/2)) << "\n";
+  std::cout << "time taken to go 48 inches: " << std::to_string((pros::millis()-starttime)) << '\n';
 }
