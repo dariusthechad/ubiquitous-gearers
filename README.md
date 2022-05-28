@@ -2,14 +2,14 @@
 this is where we can centrally manage the code or something idk
 
 # todo list
-1) make auton selector
-2) make autons
-3) make PID turns and drive straight (for auton)
-4) print more info to controller screen
-5) conveyor auto unstuck?
-6) limit switch auto clamp
-7) auto balancing using gyro
-8) print more info to controller screen
-9) add advanced options to 2nd controller in driver
-10) multithread da program, improves auton when using PID loops
-11) code odometry for abs pos tracking (extremely wip)
+1) finish odom
+2) make auton selector
+3) make odom display
+4) learn how to tune pid controllers better
+5) print more info to controller screen
+6) odom resets
+
+#ideas for reseting odometry
+line tracker
+hit walls
+gps sensor
