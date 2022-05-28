@@ -9,7 +9,7 @@ this is where we can centrally manage the code or something idk
 5) print more info to controller screen
 6) odom resets
 
-#ideas for reseting odometry
+# ideas for reseting odometry
 line tracker
 hit walls
 gps sensor
